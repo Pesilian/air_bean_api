@@ -15,6 +15,6 @@ cartRouter.post('/:cartId/items', validateCart, addToCart);
 
 cartRouter.get('/:cartId', viewCart);
 
-cartRouter.delete('/:cartId/items/:id', removeFromCart);
+cartRouter.delete('/:cartId/items/:itemId', removeFromCart);
 
 export default cartRouter;

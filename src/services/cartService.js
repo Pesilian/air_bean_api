@@ -39,7 +39,12 @@ async function addToCart(req, res) {
     return res.status(400).json({ error: 'Invalid price' });
   }
 
-  const cartItem = { title, price, preptime: product.preptime };
+  const cartItem = {
+    title,
+    price,
+    preptime: product.preptime,
+    itemid: Date.now(),
+  };
 
   try {
     // Använd $push för att lägga till cartItem till items arrayen
@@ -66,8 +71,6 @@ async function viewCart(req, res) {
   try {
     const cart = await cartDb.findOne({ _id: cartId });
 
-    console.log(cart);
-
     const totalPrice = cart.items.reduce(
       (total, cart) => total + cart.price,
       0
@@ -79,23 +82,35 @@ async function viewCart(req, res) {
   }
 }
 
-// "DELETE"/cart/id Ta bort från kundvagnen
+// "DELETE"/cart Funktion för att ta bort en artikel från kundvagnen
 async function removeFromCart(req, res) {
-  const { cartId } = req;
-  try {
-    const cartItem = await cartDb.findOne({ _id: req.params.title, cartId });
+  const itemId = req.params.itemId; // Hämta itemid från URL parametern
+  const cartId = req.params.cartId; // Hämta cartId från URL parametern
 
-    if (!cartItem) {
-      return res.status(404).json({ message: 'Cart item not found' });
+  try {
+    // Hämta varukorgen med det givna cartId
+    let cart = await cartDb.findOne({ _id: cartId });
+
+    // Om varukorgen inte finns, returnera ett felmeddelande
+    if (!cart) {
+      return res.status(404).json({ error: 'Cart not found' });
     }
 
-    await cartDb.remove({ _id: req.params.id, cartId });
+    // Ta bort artikeln med det givna itemId från varukorgen
+    const newItems = cart.items.filter(item => item.itemid !== Number(itemId));
 
-    res.status(200).json({ message: 'Cart item removed successfully' });
+    // Uppdatera varukorgen i databasen med den uppdaterade listan av artiklar
+    await cartDb.update({ _id: cartId }, { $set: { items: newItems } });
+
+    const response = {
+      itemId: itemId,
+      message: 'Item removed from cart successfully',
+    };
+
+    res.status(200).json(response);
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: 'An error occurred', error: error.message });
+    console.log(error);
+    res.status(400).json({ error: 'Failed to remove item from cart' });
   }
 }
 
