@@ -10,10 +10,10 @@ import { authenticateToken } from '../middleware/authToken.js';
 const orderRouter = Router();
 
 // "POST" /order genomför beställning
-orderRouter.post('/', authenticateToken, createOrder);
+orderRouter.post('/:cartId', authenticateToken, createOrder);
 
 //Post /order/guest
-orderRouter.post('/guest', createguestOrder);
+orderRouter.post('/guest/:cartId', createguestOrder);
 
 // "GET" /order visar alla ordrar och total summa
 orderRouter.get('/user/:userId', getUserOrders);

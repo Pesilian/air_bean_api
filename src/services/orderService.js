@@ -3,16 +3,23 @@ import { cartDb, orderDb } from '../config/db.js';
 //Beställning som gäst
 async function createguestOrder(req, res) {
   try {
-    const cart = await cartDb.find({});
+    const cartId = req.params.cartId;
+
+    const cart = await cartDb.findOne({ _id: cartId });
     if (cart.length === 0) {
       return res.status(400).json({ message: 'Cart is empty' });
     }
 
-    const totalPrice = cart.reduce((total, order) => total + order.price, 0);
+    const totalPrice = cart.items.reduce(
+      (total, cart) => total + cart.price,
+      0
+    );
 
     //Beräkna leveranstid
     const orderTime = new Date();
-    const maxPreparationTime = Math.max(...cart.map(order => order.preptime));
+    const maxPreparationTime = Math.max(
+      ...cart.items.map(item => item.preptime)
+    );
 
     console.log(maxPreparationTime);
 
