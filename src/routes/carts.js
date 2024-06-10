@@ -17,7 +17,7 @@ cartRouter.post('/:cartId/items', validateCart, addToCart);
 
 cartRouter.get('/:cartId', viewCart);
 
-cartRouter.delete('/:cartId/items/:itemId', removeFromCart);
+cartRouter.delete('/:cartId/items', removeFromCart);
 
 cartRouter.post('/:cartId/order', authenticateToken, createOrder);
 

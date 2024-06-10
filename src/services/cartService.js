@@ -1,6 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
-import { cartDb } from '../config/db.js';
-import { menu } from '../config/data.js';
+import { cartDb, menuDb } from '../config/db.js';
 
 //POST, Skapa upp Cart
 async function addCart(req, res) {
@@ -28,7 +27,9 @@ async function addToCart(req, res) {
     return res.status(404).json({ error: 'Cart not found' });
   }
 
-  const product = menu.find(item => item.title === title);
+  const product = await menuDb.findOne({ title: title });
+
+  console.log(product);
 
   if (!product) {
     return res.status(400).json({ error: 'Product not found' });
@@ -82,7 +83,7 @@ async function viewCart(req, res) {
 
 // "DELETE"/cart Funktion för att ta bort en artikel från kundvagnen
 async function removeFromCart(req, res) {
-  const itemId = req.params.itemId;
+  const { itemId } = req.body;
   const cartId = req.params.cartId;
 
   try {

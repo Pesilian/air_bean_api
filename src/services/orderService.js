@@ -52,15 +52,22 @@ async function createguestOrder(req, res) {
 //Beställning som inloggad användare:
 async function createOrder(req, res) {
   try {
-    const cart = await cartDb.find({});
+    const cartId = req.params.cartId;
+
+    const cart = await cartDb.findOne({ _id: cartId });
     if (cart.length === 0) {
       return res.status(400).json({ message: 'Cart is empty' });
     }
 
-    const totalPrice = cart.reduce((total, order) => total + order.price, 0);
+    const totalPrice = cart.items.reduce(
+      (total, cart) => total + cart.price,
+      0
+    );
 
     const orderTime = new Date();
-    const maxPreparationTime = Math.max(...cart.map(order => order.preptime));
+    const maxPreparationTime = Math.max(
+      ...cart.items.map(item => item.preptime)
+    );
 
     const deliveryTime = new Date(
       orderTime.getTime() + maxPreparationTime * 60000
@@ -76,16 +83,16 @@ async function createOrder(req, res) {
       userId: user.id,
     };
 
-    const newOrder = await orderDb.insert(order);
+    await orderDb.insert(order);
 
     await cartDb.remove({}, { multi: true });
 
     res.status(201).json({
-      items: newOrder.items,
-      totalPrice: newOrder.totalPrice,
-      delivery: newOrder.deliveryTime,
+      items: order.items,
+      totalPrice: order.totalPrice,
+      delivery: order.deliveryTime,
       message: 'Order created successfully',
-      orderId: newOrder._id,
+      orderId: order._id,
     });
   } catch (error) {
     res
@@ -98,7 +105,6 @@ async function createOrder(req, res) {
 async function getUserOrders(req, res) {
   try {
     const userId = req.params.userId;
-    console.log(userId);
 
     const usersOrder = await orderDb.find({ userId: userId });
 

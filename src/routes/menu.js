@@ -1,17 +1,20 @@
 import { Router } from 'express';
-import { menuDb } from '../config/db.js';
+import { getMenu, addToMenu, removeFromMenu } from '../services/menuService.js';
+import { authenticateTokenAdmin } from '../middleware/authTokenAdmin.js';
 
-const router = Router();
+const menuRouter = Router();
 
 // "GET"/menu Visar hela menyn
 
-router.get('/', (req, res) => {
-  res.json(menuDb);
-});
+menuRouter.get('/', getMenu);
 
 //Add item to menu - only logged in admin
 
+menuRouter.post('/admin/additem', addToMenu, authenticateTokenAdmin);
+
 //DELETE item on menu - only logged in admin
+
+menuRouter.delete('/admin/removeitem', removeFromMenu, authenticateTokenAdmin);
 
 //Modify item on menu - only logged in admin
 
@@ -19,4 +22,4 @@ router.get('/', (req, res) => {
 
 //DELETE campain item
 
-export default router;
+export default menuRouter;
