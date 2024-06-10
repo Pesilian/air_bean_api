@@ -15,19 +15,14 @@ async function createguestOrder(req, res) {
       0
     );
 
-    //Beräkna leveranstid
     const orderTime = new Date();
     const maxPreparationTime = Math.max(
       ...cart.items.map(item => item.preptime)
     );
 
-    console.log(maxPreparationTime);
-
     const deliveryTime = new Date(
       orderTime.getTime() + maxPreparationTime * 60000
     );
-
-    console.log(orderTime, deliveryTime);
 
     const order = {
       items: cart,
@@ -38,7 +33,6 @@ async function createguestOrder(req, res) {
 
     await orderDb.insert(order);
 
-    // Tömmer kundvagnen efter ordern är skapad
     await cartDb.remove({}, { multi: true });
 
     res.status(201).json({
@@ -65,17 +59,12 @@ async function createOrder(req, res) {
 
     const totalPrice = cart.reduce((total, order) => total + order.price, 0);
 
-    // Beräkna leveranstid
     const orderTime = new Date();
     const maxPreparationTime = Math.max(...cart.map(order => order.preptime));
-
-    console.log(maxPreparationTime);
 
     const deliveryTime = new Date(
       orderTime.getTime() + maxPreparationTime * 60000
     );
-
-    console.log(orderTime, deliveryTime);
 
     // Kolla om användaren är inloggad
     const user = req.user;
@@ -84,12 +73,11 @@ async function createOrder(req, res) {
       totalPrice,
       deliveryTime,
       createdAt: new Date(),
-      userId: user.id, // Inkluderar userId om användaren är inloggad
+      userId: user.id,
     };
 
     const newOrder = await orderDb.insert(order);
 
-    // Tömmer kundvagnen efter ordern är skapad
     await cartDb.remove({}, { multi: true });
 
     res.status(201).json({
@@ -97,7 +85,7 @@ async function createOrder(req, res) {
       totalPrice: newOrder.totalPrice,
       delivery: newOrder.deliveryTime,
       message: 'Order created successfully',
-      orderId: newOrder._id, // Inkluderar orderId om användaren är inloggad
+      orderId: newOrder._id,
     });
   } catch (error) {
     res
@@ -105,9 +93,6 @@ async function createOrder(req, res) {
       .json({ message: 'Failed to create order', error: error.message });
   }
 }
-
-// JENS, VILL DU GÖRA DEN HÄR TACK (getUserOrders funktionen)
-// Den ska visa alla ordrar och en totalsumma för alla ordrar
 
 // Funktion för att hämta en användares orderhistorik
 async function getUserOrders(req, res) {

@@ -1,7 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 import { cartDb } from '../config/db.js';
 import { menu } from '../config/data.js';
-import cartRouter from '../routes/carts.js';
 
 //POST, Skapa upp Cart
 async function addCart(req, res) {
@@ -47,7 +46,6 @@ async function addToCart(req, res) {
   };
 
   try {
-    // Använd $push för att lägga till cartItem till items arrayen
     await cartDb.update({ _id: cartId }, { $push: { items: cartItem } });
 
     const response = {
@@ -84,22 +82,18 @@ async function viewCart(req, res) {
 
 // "DELETE"/cart Funktion för att ta bort en artikel från kundvagnen
 async function removeFromCart(req, res) {
-  const itemId = req.params.itemId; // Hämta itemid från URL parametern
-  const cartId = req.params.cartId; // Hämta cartId från URL parametern
+  const itemId = req.params.itemId;
+  const cartId = req.params.cartId;
 
   try {
-    // Hämta varukorgen med det givna cartId
     let cart = await cartDb.findOne({ _id: cartId });
 
-    // Om varukorgen inte finns, returnera ett felmeddelande
     if (!cart) {
       return res.status(404).json({ error: 'Cart not found' });
     }
 
-    // Ta bort artikeln med det givna itemId från varukorgen
     const newItems = cart.items.filter(item => item.itemid !== Number(itemId));
 
-    // Uppdatera varukorgen i databasen med den uppdaterade listan av artiklar
     await cartDb.update({ _id: cartId }, { $set: { items: newItems } });
 
     const response = {

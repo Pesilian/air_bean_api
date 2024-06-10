@@ -1,6 +1,6 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import { userDb } from '../config/db.js'; // Anta att du har en userDb för användardata
+import { userDb } from '../config/db.js';
 
 // Funktion för att registrera en ny användare
 async function registerUser(req, res) {
@@ -10,17 +10,14 @@ async function registerUser(req, res) {
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = { username, password: hashedPassword };
 
-    // Försök att lägga till den nya användaren i databasen
     const newUser = await userDb.insert(user);
-    // Om det lyckas, returnera den nya användaren
     res.status(201).json(newUser);
   } catch (error) {
-    // Om ett fel uppstår, returnera ett felmeddelande
     res.status(400).json({ error: 'Failed to register user' });
   }
 }
 
-const SECRET_KEY = 'your-secret-key'; // Du bör använda en miljövariabel för detta
+const SECRET_KEY = 'your-secret-key';
 
 //logga in användare
 async function loginUser(req, res) {
@@ -39,7 +36,6 @@ async function loginUser(req, res) {
       return res.status(400).json({ error: 'Invalid username or password' });
     }
 
-    //Skapar upp en bearer token som används som autentisering för att lägga ordrar
     const token = jwt.sign(
       { id: user._id, username: user.username },
       SECRET_KEY,
