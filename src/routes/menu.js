@@ -7,6 +7,7 @@ import {
 } from '../services/menuService.js';
 import { authorizeAdmin } from '../middleware/authorizeAdmin.js';
 import { authenticateToken } from '../middleware/authToken.js';
+import { validateProduct } from '../middleware/validateProduct.js';
 
 const menuRouter = Router();
 
@@ -16,23 +17,29 @@ menuRouter.get('/', getMenu);
 
 //Add item to menu - only logged in admin
 
-menuRouter.post('/admin/additem', addToMenu, authorizeAdmin, authenticateToken);
+menuRouter.post(
+  '/admin/additem',
+  authenticateToken,
+  authorizeAdmin,
+  validateProduct,
+  addToMenu
+);
 
 //DELETE item on menu - only logged in admin
 
 menuRouter.delete(
   '/admin/removeitem',
-  removeFromMenu,
+  authenticateToken,
   authorizeAdmin,
-  authenticateToken
+  removeFromMenu
 );
 
 //Modify item on menu - only logged in admin
 menuRouter.patch(
   '/admin/edit/:itemId',
-  editMenuItem,
+  authenticateToken,
   authorizeAdmin,
-  authenticateToken
+  editMenuItem
 );
 
 //Add campain menu item
