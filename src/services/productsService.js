@@ -42,7 +42,7 @@ async function addProducts(req, res) {
 
 // "DELETE"/cart Funktion för att ta bort en artikel från kundvagnen
 async function removeProducts(req, res) {
-  const { itemId } = req.body;
+  const itemId = req.params.itemId;
 
   try {
     let product = await productsDb.findOne({ _id: itemId });
@@ -54,7 +54,7 @@ async function removeProducts(req, res) {
     await productsDb.deleteOne({ _id: itemId });
 
     const response = {
-      itemId: itemId,
+      ProductId: itemId,
       message: 'Product removed from cart successfully',
     };
 

@@ -16,7 +16,7 @@ productsRouter.get('/', getProducts);
 
 //Add item to menu - only logged in admin
 productsRouter.post(
-  '/item',
+  '/',
   authenticateToken,
   authorizeAdmin,
   validateProduct,
@@ -26,7 +26,7 @@ productsRouter.post(
 //DELETE item on menu - only logged in admin
 
 productsRouter.delete(
-  '/item',
+  '/:itemId',
   authenticateToken,
   authorizeAdmin,
   removeProducts
@@ -34,7 +34,7 @@ productsRouter.delete(
 
 //Modify item on menu - only logged in admin
 productsRouter.patch(
-  '/item/:itemId',
+  '/:itemId',
   authenticateToken,
   authorizeAdmin,
   editProducts

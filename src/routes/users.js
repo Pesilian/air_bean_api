@@ -33,6 +33,6 @@ usersRouter.post('/logout', (req, res) => {
 });
 
 // "GET" /order visar alla ordrar och total summa
-usersRouter.get('/:userId', getUserOrders);
+usersRouter.get('/:userId/orders', getUserOrders);
 
 export default usersRouter;

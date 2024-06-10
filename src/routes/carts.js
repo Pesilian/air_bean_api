@@ -5,9 +5,7 @@ import {
   addToCart,
   removeFromCart,
 } from '../services/cartService.js';
-import { createOrder, createguestOrder } from '../services/orderService.js';
 import { validateCart } from '../middleware/validateCart.js';
-import { authenticateToken } from '../middleware/authToken.js';
 
 const cartRouter = Router();
 
@@ -15,12 +13,12 @@ const cartRouter = Router();
 cartRouter.post('/', newCart);
 
 //POST - /carts/:cartId -Lägg till varor i kundvagn
-cartRouter.post('/:cartId/', validateCart, addToCart);
+cartRouter.post('/:cartId/items', validateCart, addToCart);
 
 //POST - /carts/:cartId -Visa kundvagn
 cartRouter.get('/:cartId', viewCart);
 
-//POST -/carts/:cartId -Ta bort vara från kundvagn
-cartRouter.delete('/:cartId/items', removeFromCart);
+//POST -/carts/:cartId -Ta bort vara från kundvagn // TODO: kommentarer som inte är aktuella längre.
+cartRouter.delete('/:cartId/items/:itemId', removeFromCart);
 
 export default cartRouter;

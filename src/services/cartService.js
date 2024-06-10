@@ -1,4 +1,3 @@
-import { v4 as uuidv4 } from 'uuid';
 import { cartDb, productsDb } from '../config/db.js';
 
 // CREATE CART
@@ -9,7 +8,7 @@ async function newCart(req, res) {
     const newCart = await cartDb.insert(Cart);
 
     res
-      .status(201)
+      .status(201) // TODO: Man bruka skicka med en "Location"-header i svaret vid 201 istället för att skicka med cartid i bodyn.
       .json({ cartId: newCart._id, message: 'Cart created successfully' });
   } catch (error) {
     res.status(500).json({ error: 'Failed to create cart' });
@@ -59,7 +58,7 @@ async function addToCart(req, res) {
     res.status(201).json(response);
   } catch (error) {
     console.log(error);
-    res.status(400).json({ error: 'Failed to add to cart' });
+    res.status(500).json({ error: 'Failed to add to cart' });
   }
 }
 
@@ -77,13 +76,13 @@ async function viewCart(req, res) {
 
     res.status(200).json({ cart, totalPrice });
   } catch (error) {
-    res.status(400).json({ error: 'Failed to retrieve cart' });
+    res.status(500).json({ error: 'Failed to retrieve cart' });
   }
 }
 
 // REMOVE ITEM FROM CART
 async function removeFromCart(req, res) {
-  const { itemId } = req.body;
+  const itemId = req.params.itemId;
   const cartId = req.params.cartId;
 
   try {
@@ -105,7 +104,7 @@ async function removeFromCart(req, res) {
     res.status(200).json(response);
   } catch (error) {
     console.log(error);
-    res.status(400).json({ error: 'Failed to remove item from cart' });
+    res.status(500).json({ error: 'Failed to remove item from cart' });
   }
 }
 
