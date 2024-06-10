@@ -1,2 +1,3 @@
-
-{"title":"Kaffe Latte","price":25,"desc":"Bryggt med våra färska bönor","preptime":10,"createdAt":{"$$date":1718045032318},"_id":"qpxbEsdDp4stZPNk"}
+{"title":"Kaffe Latte","price":50,"desc":"Bryggt med våra färska bönor","preptime":50,"createdAt":{"$$date":1718045032318},"_id":"qpxbEsdDp4stZPNk"}
+{"title":"Kaffe Latte","price":50,"desc":"Bryggt med våra färska bönor","preptime":50,"createdAt":{"$$date":1718045032318},"_id":"qpxbEsdDp4stZPNk","modifiedAt":{"$$date":1718045799652}}
+{"$$deleted":true,"_id":"qpxbEsdDp4stZPNk"}

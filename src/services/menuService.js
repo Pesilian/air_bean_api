@@ -75,7 +75,7 @@ async function editMenuItem(req, res) {
     if (!menuItem) {
       return res.status(404).json({ error: 'Item not found' });
     }
-    const updatedFields = {};
+    const updatedFields = { modifiedAt: new Date() };
     if (title) updatedFields.title = title;
     if (price) updatedFields.price = price;
     if (desc) updatedFields.desc = desc;
