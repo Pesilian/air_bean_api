@@ -1,10 +1,9 @@
 import express from 'express';
-import menuRouter from './src/routes/menu.js';
-import aboutRouter from './src/routes/companyInfo.js';
-import orderRouter from './src/routes/order.js';
-import userRouter from './src/routes/users.js';
+import productsRouter from './src/routes/products.js';
+import infoRouter from './src/routes/info.js';
+import ordersRouter from './src/routes/orders.js';
+import usersRouter from './src/routes/users.js';
 import cartRouter from './src/routes/carts.js';
-import adminRouter from './src/routes/admin.js';
 
 const app = express();
 const PORT = 8000;
@@ -13,12 +12,11 @@ const PORT = 8000;
 app.use(express.json());
 
 // Routes
-app.use('/menu', menuRouter);
-app.use('/about ', aboutRouter);
-app.use('/order', orderRouter);
-app.use('/user', userRouter);
+app.use('/products', productsRouter);
+app.use('/info ', infoRouter);
+app.use('/orders', ordersRouter);
+app.use('/users', usersRouter);
 app.use('/carts', cartRouter);
-app.use('/admin', adminRouter);
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}...`);

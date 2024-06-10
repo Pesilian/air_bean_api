@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import {
-  addCart,
+  newCart,
   viewCart,
   addToCart,
   removeFromCart,
@@ -11,16 +11,16 @@ import { authenticateToken } from '../middleware/authToken.js';
 
 const cartRouter = Router();
 
-cartRouter.post('/', addCart);
+//POST - /carts/  -skapar upp en kundvagn
+cartRouter.post('/', newCart);
 
-cartRouter.post('/:cartId/items', validateCart, addToCart);
+//POST - /carts/:cartId -Lägg till varor i kundvagn
+cartRouter.post('/:cartId/', validateCart, addToCart);
 
+//POST - /carts/:cartId -Visa kundvagn
 cartRouter.get('/:cartId', viewCart);
 
+//POST -/carts/:cartId -Ta bort vara från kundvagn
 cartRouter.delete('/:cartId/items', removeFromCart);
-
-cartRouter.post('/:cartId/order', authenticateToken, createOrder);
-
-cartRouter.post('/:cartId/order/guest', createguestOrder);
 
 export default cartRouter;

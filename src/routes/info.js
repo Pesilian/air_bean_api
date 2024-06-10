@@ -1,12 +1,12 @@
 import { Router } from 'express';
 import { companyInfo } from '../config/data.js';
 
-const router = Router();
+const infoRouter = Router();
 
 // "GET"/about Visar information om företaget
 
-router.get('/', (req, res) => {
+infoRouter.get('/', (req, res) => {
   res.json(companyInfo);
 });
 
-export default router;
+export default infoRouter;

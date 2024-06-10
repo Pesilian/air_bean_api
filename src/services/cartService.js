@@ -1,8 +1,8 @@
 import { v4 as uuidv4 } from 'uuid';
-import { cartDb, menuDb } from '../config/db.js';
+import { cartDb, productsDb } from '../config/db.js';
 
-//POST, Skapa upp Cart
-async function addCart(req, res) {
+// CREATE CART
+async function newCart(req, res) {
   const Cart = { items: [] };
 
   try {
@@ -16,7 +16,7 @@ async function addCart(req, res) {
   }
 }
 
-// "POST"/cart Funktion för att lägga till i kundvagnen
+// ADD ITEM TO CART
 async function addToCart(req, res) {
   const { title, price } = req.body;
   const cartId = req.params.cartId;
@@ -27,7 +27,7 @@ async function addToCart(req, res) {
     return res.status(404).json({ error: 'Cart not found' });
   }
 
-  const product = await menuDb.findOne({ title: title });
+  const product = await productsDb.findOne({ title: title });
 
   console.log(product);
 
@@ -63,7 +63,7 @@ async function addToCart(req, res) {
   }
 }
 
-// "GET"/cart varukorg
+// SHOW CART
 async function viewCart(req, res) {
   const cartId = req.params.cartId;
 
@@ -81,7 +81,7 @@ async function viewCart(req, res) {
   }
 }
 
-// "DELETE"/cart Funktion för att ta bort en artikel från kundvagnen
+// REMOVE ITEM FROM CART
 async function removeFromCart(req, res) {
   const { itemId } = req.body;
   const cartId = req.params.cartId;
@@ -109,4 +109,4 @@ async function removeFromCart(req, res) {
   }
 }
 
-export { addCart, addToCart, viewCart, removeFromCart };
+export { newCart, addToCart, viewCart, removeFromCart };

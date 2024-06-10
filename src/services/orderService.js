@@ -1,6 +1,6 @@
 import { cartDb, orderDb } from '../config/db.js';
 
-//Beställning som gäst
+//ORDER AS GUEST
 async function createguestOrder(req, res) {
   try {
     const cartId = req.params.cartId;
@@ -49,7 +49,7 @@ async function createguestOrder(req, res) {
   }
 }
 
-//Beställning som inloggad användare:
+//ORDER AS USER
 async function createOrder(req, res) {
   try {
     const cartId = req.params.cartId;
@@ -73,7 +73,6 @@ async function createOrder(req, res) {
       orderTime.getTime() + maxPreparationTime * 60000
     );
 
-    // Kolla om användaren är inloggad
     const user = req.user;
     const order = {
       items: cart,
@@ -101,21 +100,36 @@ async function createOrder(req, res) {
   }
 }
 
-// Funktion för att hämta en användares orderhistorik
-async function getUserOrders(req, res) {
+//SHOW ORDER STATUS
+async function getOrderById(req, res) {
   try {
-    const userId = req.params.userId;
+    const orderId = req.params.orderId;
 
-    const usersOrder = await orderDb.find({ userId: userId });
+    const order = await orderDb.findOne({ _id: orderId });
 
-    if (usersOrder.length === 0) {
-      return res.status(404).json({ error: 'No orders found' });
+    const currentTime = new Date();
+    const deliveryTime = new Date(order.deliveryTime);
+    const isDelivered = deliveryTime <= currentTime;
+
+    let timeLeft = null;
+    if (!isDelivered) {
+      const timeDiff = deliveryTime - currentTime;
+      const minutesLeft = Math.floor(timeDiff / 60000);
+
+      const secondsLeft = Math.floor((timeDiff % 60000) / 1000);
+      timeLeft = `${minutesLeft} minutes and ${secondsLeft} seconds`;
     }
 
-    res.status(200).json({ orderCount: usersOrder.length, orders: usersOrder });
+    const orderWithDeliveryStatus = {
+      ...order,
+      isDelivered,
+      timeLeft: isDelivered ? null : timeLeft,
+    };
+
+    res.status(200).json({ orderWithDeliveryStatus });
   } catch (error) {
-    res.status(500).json({ error: 'Failed to get users orders' });
+    res.status(400).json({ error: 'Failed to get order' });
   }
 }
 
-export { createOrder, getUserOrders, createguestOrder };
+export { createOrder, createguestOrder, getOrderById };
