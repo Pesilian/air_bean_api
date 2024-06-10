@@ -1,6 +1,5 @@
 import { Router } from 'express';
 import { getMenu, addToMenu, removeFromMenu } from '../services/menuService.js';
-import { authenticateTokenAdmin } from '../middleware/authTokenAdmin.js';
 
 const menuRouter = Router();
 
@@ -10,11 +9,11 @@ menuRouter.get('/', getMenu);
 
 //Add item to menu - only logged in admin
 
-menuRouter.post('/admin/additem', addToMenu, authenticateTokenAdmin);
+menuRouter.post('/admin/additem', addToMenu);
 
 //DELETE item on menu - only logged in admin
 
-menuRouter.delete('/admin/removeitem', removeFromMenu, authenticateTokenAdmin);
+menuRouter.delete('/admin/removeitem', removeFromMenu);
 
 //Modify item on menu - only logged in admin
 

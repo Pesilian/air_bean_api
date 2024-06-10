@@ -27,7 +27,7 @@ async function getOrderById(req, res) {
 
     res.status(200).json({ orderWithDeliveryStatus });
   } catch (error) {
-    res.status(400).json({ error: 'Failed to get users orders' });
+    res.status(400).json({ error: 'Failed to get order' });
   }
 }
 
