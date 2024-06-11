@@ -1,39 +1,95 @@
-import { cartDb, orderDb } from '../config/db.js';
+import { cartDb, orderDb, campaignsDb } from '../config/db.js';
 
-//ORDER AS GUEST
+//CREATE ORDER AS GUEST
 async function createguestOrder(req, res) {
   try {
     const cartId = req.params.cartId;
 
     const cart = await cartDb.findOne({ _id: cartId });
-    if (cart.length === 0) {
+    if (!cart || cart.items.length === 0) {
       return res.status(400).json({ message: 'Cart is empty' });
     }
-
-    const totalPrice = cart.items.reduce(
-      (total, cart) => total + cart.price,
-      0
-    );
 
     const orderTime = new Date();
     const maxPreparationTime = Math.max(
       ...cart.items.map(item => item.preptime)
     );
-
     const deliveryTime = new Date(
       orderTime.getTime() + maxPreparationTime * 60000
     );
 
+    const campaigns = await campaignsDb.find();
+    let applicableCampaign = null;
+    let campaignItems = [];
+    let otherItems = [...cart.items];
+
+    for (const campaign of campaigns) {
+      const campaignProductTitles = campaign.Products.map(
+        product => product.title
+      );
+      const cartProductTitles = cart.items.map(item => item.title);
+
+      // Kontrollera om alla kampanjprodukter finns i varukorgen
+      if (
+        campaignProductTitles.every(title => cartProductTitles.includes(title))
+      ) {
+        applicableCampaign = campaign;
+        break;
+      }
+    }
+
+    if (applicableCampaign) {
+      const campaignProductTitles = applicableCampaign.Products.map(
+        product => product.title
+      );
+      const campaignProductCount = {};
+
+      for (const title of campaignProductTitles) {
+        campaignProductCount[title] = (campaignProductCount[title] || 0) + 1;
+      }
+
+      // Lägga till kampanjprodukterna i campaignItems
+      for (const item of cart.items) {
+        if (
+          campaignProductTitles.includes(item.title) &&
+          campaignProductCount[item.title] > 0
+        ) {
+          campaignItems.push(item);
+          campaignProductCount[item.title]--;
+          // Ta bort produkten från otherItems
+          otherItems = otherItems.filter(otherItem => otherItem !== item);
+        }
+      }
+
+      campaignItems = campaignItems.slice(0, campaignProductTitles.length);
+    }
+
+    const otherItemsTotalPrice = otherItems.reduce(
+      (total, item) => total + item.price,
+      0
+    );
+    const totalPrice =
+      (applicableCampaign ? applicableCampaign.price : 0) +
+      otherItemsTotalPrice;
+
     const order = {
-      items: cart,
+      items: {
+        campaign: campaignItems.length
+          ? {
+              title: applicableCampaign.title,
+              items: campaignItems,
+              price: applicableCampaign.price,
+            }
+          : null,
+        others: otherItems,
+      },
       totalPrice,
       deliveryTime,
       createdAt: new Date(),
     };
 
     await orderDb.insert(order);
-
-    await cartDb.remove({}, { multi: true });
+    await cartDb.remove({ _id: cartId });
 
     res.status(201).json({
       items: order.items,
@@ -49,42 +105,96 @@ async function createguestOrder(req, res) {
   }
 }
 
-//ORDER AS USER
+//CREATE ORDER AS USER
 async function createOrder(req, res) {
   try {
     const cartId = req.params.cartId;
 
     const cart = await cartDb.findOne({ _id: cartId });
-    if (cart.length === 0) {
+    if (!cart || cart.items.length === 0) {
       return res.status(400).json({ message: 'Cart is empty' });
     }
-
-    const totalPrice = cart.items.reduce(
-      (total, cart) => total + cart.price,
-      0
-    );
 
     const orderTime = new Date();
     const maxPreparationTime = Math.max(
       ...cart.items.map(item => item.preptime)
     );
-
     const deliveryTime = new Date(
       orderTime.getTime() + maxPreparationTime * 60000
     );
 
+    const campaigns = await campaignsDb.find();
+    let applicableCampaign = null;
+    let campaignItems = [];
+    let otherItems = [...cart.items];
+
+    for (const campaign of campaigns) {
+      const campaignProductTitles = campaign.Products.map(
+        product => product.title
+      );
+      const cartProductTitles = cart.items.map(item => item.title);
+
+      if (
+        campaignProductTitles.every(title => cartProductTitles.includes(title))
+      ) {
+        applicableCampaign = campaign;
+        break;
+      }
+    }
+
+    if (applicableCampaign) {
+      const campaignProductTitles = applicableCampaign.Products.map(
+        product => product.title
+      );
+      const campaignProductCount = {};
+
+      for (const title of campaignProductTitles) {
+        campaignProductCount[title] = (campaignProductCount[title] || 0) + 1;
+      }
+
+      for (const item of cart.items) {
+        if (
+          campaignProductTitles.includes(item.title) &&
+          campaignProductCount[item.title] > 0
+        ) {
+          campaignItems.push(item);
+          campaignProductCount[item.title]--;
+          // Ta bort produkten från otherItems
+          otherItems = otherItems.filter(otherItem => otherItem !== item);
+        }
+      }
+
+      campaignItems = campaignItems.slice(0, campaignProductTitles.length);
+    }
+
+    const otherItemsTotalPrice = otherItems.reduce(
+      (total, item) => total + item.price,
+      0
+    );
+    const totalPrice =
+      (applicableCampaign ? applicableCampaign.price : 0) +
+      otherItemsTotalPrice;
+
     const user = req.user;
     const order = {
-      items: cart,
+      items: {
+        campaign: campaignItems.length
+          ? {
+              title: applicableCampaign.title,
+              items: campaignItems,
+              price: applicableCampaign.price,
+            }
+          : null,
+        others: otherItems,
+      },
+      userId: user._id,
       totalPrice,
       deliveryTime,
       createdAt: new Date(),
-      userId: user.id,
     };
 
     await orderDb.insert(order);
-
-    await cartDb.remove({}, { multi: true });
+    await cartDb.remove({ _id: cartId });
 
     res.status(201).json({
       items: order.items,

@@ -40,15 +40,4 @@ productsRouter.patch(
   editProducts
 );
 
-//Add campain menu item
-productsRouter.post('/item/campain', authenticateToken, authorizeAdmin);
-
-//DELETE campain item
-productsRouter.delete(
-  '/item/campain',
-  authenticateToken,
-  authorizeAdmin,
-  removeProducts
-);
-
 export default productsRouter;
