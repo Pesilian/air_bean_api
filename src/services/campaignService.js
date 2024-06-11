@@ -1,15 +1,31 @@
-import { productsDb, campaignsDb } from '../config/db.js';
+import { campaignsDb } from '../config/db.js';
 
-//ADD CAMPAIGN
+// ADD CAMPAIGN
 async function newCampaign(req, res) {
   const { title, price, duration } = req.body;
-  const Campaign = { title, Products: [], price, duration };
+
+  const startDate = new Date();
+  const endDate = new Date(
+    startDate.getTime() + duration * 24 * 60 * 60 * 1000
+  );
+
+  const Campaign = {
+    title,
+    Products: [],
+    price,
+    duration,
+    startDate,
+    endDate,
+  };
 
   try {
     const newCampaign = await campaignsDb.insert(Campaign);
 
     res.status(201).json({
       Campaign: newCampaign.title,
+      duration: newCampaign.duration,
+      startDate: newCampaign.startDate,
+      endDate: newCampaign.endDate,
       message: 'Campaign created successfully',
     });
   } catch (error) {
