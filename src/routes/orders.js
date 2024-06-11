@@ -8,12 +8,13 @@ import { authenticateToken } from '../middleware/authToken.js';
 
 const ordersRouter = Router();
 
-//
+//ORDER AS USER
 ordersRouter.post('/:cartId/', authenticateToken, createOrder);
 
+//ORDER AS GUEST
 ordersRouter.post('/:cartId/guest', createguestOrder);
 
-// "GET" /order/:orderId visar status sidan för en specifik order
+//SHOW ORDER STATUS
 ordersRouter.get('/:orderId', getOrderById);
 
 export default ordersRouter;

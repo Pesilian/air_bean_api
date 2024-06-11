@@ -176,6 +176,7 @@ async function createOrder(req, res) {
       otherItemsTotalPrice;
 
     const user = req.user;
+    console.log(user);
     const order = {
       items: {
         campaign: campaignItems.length
@@ -187,8 +188,8 @@ async function createOrder(req, res) {
           : null,
         others: otherItems,
       },
-      userId: user._id,
       totalPrice,
+      userid: user.id,
       deliveryTime,
       createdAt: new Date(),
     };
@@ -200,6 +201,7 @@ async function createOrder(req, res) {
       items: order.items,
       totalPrice: order.totalPrice,
       delivery: order.deliveryTime,
+      userId: user.id,
       message: 'Order created successfully',
       orderId: order._id,
     });
