@@ -88,15 +88,15 @@ async function createguestOrder(req, res) {
       createdAt: new Date(),
     };
 
-    await orderDb.insert(order);
+    const newOrder = await orderDb.insert(order);
     await cartDb.remove({ _id: cartId });
 
     res.status(201).json({
-      items: order.items,
-      totalPrice: order.totalPrice,
-      delivery: order.deliveryTime,
+      items: newOrder.items,
+      totalPrice: newOrder.totalPrice,
+      delivery: newOrder.deliveryTime,
       message: 'Order created successfully',
-      orderId: order._id,
+      orderId: newOrder._id,
     });
   } catch (error) {
     res
@@ -194,16 +194,16 @@ async function createOrder(req, res) {
       createdAt: new Date(),
     };
 
-    await orderDb.insert(order);
+    const newOrder = await orderDb.insert(order);
     await cartDb.remove({ _id: cartId });
 
     res.status(201).json({
-      items: order.items,
-      totalPrice: order.totalPrice,
-      delivery: order.deliveryTime,
-      userId: user.id,
+      items: newOrder.items,
+      totalPrice: newOrder.totalPrice,
+      delivery: newOrder.deliveryTime,
+      userId: newOrder.userid,
       message: 'Order created successfully',
-      orderId: order._id,
+      orderId: newOrder._id,
     });
   } catch (error) {
     res
