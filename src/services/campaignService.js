@@ -2,8 +2,8 @@ import { productsDb, campaignsDb } from '../config/db.js';
 
 //ADD CAMPAIGN
 async function newCampaign(req, res) {
-  const { title, price } = req.body;
-  const Campaign = { title, Products: [], price };
+  const { title, price, duration } = req.body;
+  const Campaign = { title, Products: [], price, duration };
 
   try {
     const newCampaign = await campaignsDb.insert(Campaign);
