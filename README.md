@@ -10,9 +10,9 @@ http://localhost:8000
 
 Detta anrop används för att hämta information om Air Bean. Anropet skickas som en GET-förfrågan. Om anropet lyckas returneras information om Air Bean.
 
-## URL användare:
+## URL:
 
-![Alt text](images/example.png)
+![Alt text](images/.png)
 
 ## USERS/register
 
