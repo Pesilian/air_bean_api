@@ -108,7 +108,7 @@ Detta anrop används för att lägga till produkter i varukorgen. Anropen skicka
 
 ### URL:
 
-![New Cart](images/addProductCartBodyUrl.png)
+![Add product to cart](images/addProductCartBodyUrl.png)
 
 ## /carts/:cartId/items/:productId
 
@@ -116,25 +116,31 @@ Detta anrop används för att ta bort produkter i varukorgen. Anropen skickas so
 
 ### URL:
 
-![New Cart](images/deleteProdCart.png)
+![Remove item from cart](images/deleteProdCart.png)
 
-## /order/login
+## /order/:cartId
 
-Detta anrop används för att logga in användare. Anropen skickas som POST-förfrågan. OM anropet lyckas returneras bekräftelse samt en token som används som autentisering.
-
-### URL:
-
-## /orders/login
-
-Detta anrop används för att logga in användare. Anropen skickas som POST-förfrågan. OM anropet lyckas returneras bekräftelse samt en token som används som autentisering.
+Detta anrop används för lägga order som användare. Kräver autentisering med token. Anropen skickas som POST-förfrågan. OM anropet lyckas returneras bekräftelse.
 
 ### URL:
 
-## /orders/login
+![Order as user](images/orderAsUser.png)
 
-Detta anrop används för att logga in användare. Anropen skickas som POST-förfrågan. OM anropet lyckas returneras bekräftelse samt en token som används som autentisering.
+## /order/:cartId/guest
+
+Detta anrop används för lägga order som gäst. Anropen skickas som POST-förfrågan. OM anropet lyckas returneras bekräftelse.
 
 ### URL:
+
+![Order as user](images/orderAsGuest.png)
+
+## /order/:orderId
+
+Detta anrop används för kontrollera status på en order. Anropen skickas som POST-förfrågan. OM anropet lyckas returneras bekräftelse.
+
+### URL:
+
+![Order as user](images/orderStatus.png)
 
 ### Security
 
