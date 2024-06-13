@@ -15,7 +15,7 @@ campaignRouter.post('/', authenticateToken, authorizeAdmin, newCampaign);
 
 //Add campaign
 campaignRouter.post(
-  '/:campaignTitle',
+  '/:campaignId',
   authenticateToken,
   authorizeAdmin,
   addCampaignProducts
@@ -23,7 +23,7 @@ campaignRouter.post(
 
 //DELETE campaign
 campaignRouter.delete(
-  '/:campaignTitle',
+  '/:campaignId',
 
   removeCampaign
 );

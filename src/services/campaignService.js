@@ -26,6 +26,7 @@ async function newCampaign(req, res) {
       duration: newCampaign.duration,
       startDate: newCampaign.startDate,
       endDate: newCampaign.endDate,
+      campaignId: newCampaign._id,
       message: 'Campaign created successfully',
     });
   } catch (error) {
