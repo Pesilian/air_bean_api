@@ -8,7 +8,7 @@ http://localhost:8000
 
 # Authentication Token:
 
-## Info:
+## /info
 
 Detta anrop används för att hämta information om Air Bean. Anropet skickas som en GET-förfrågan. Om anropet lyckas returneras information om Air Bean.
 
@@ -16,7 +16,7 @@ Detta anrop används för att hämta information om Air Bean. Anropet skickas so
 
 ![Alt text](images/.png)
 
-## USERS/register
+## /users/register
 
 Detta anrop används för att registrera användare. Anropen skickas som POST-förfrågan. Man kan lägga upp vanliga användare och admin, men för att lägga upp adminanvändare måste man vara inloggad admin.
 
@@ -30,13 +30,13 @@ Detta kräver autentisering.
 
 ![Url to register admin](images/registerAdminBodyUrl.png)
 
-## USERS/login
+## /users/login
 
 Detta anrop används för att logga in användare. Anropen skickas som POST-förfrågan. OM anropet lyckas returneras bekräftelse samt en token som används som autentisering.
 
 ![Url to register admin](images/loginBodyUrl.png)
 
-## USERS/:userId
+## /users/:userId
 
 Detta anrop används för att se användarhistorik för en specifik användare. Anropen skickas som GET-förfrågan. OM anropet lyckas returneras vald användare orderhistorik.
 
@@ -44,7 +44,7 @@ Detta anrop används för att se användarhistorik för en specifik användare. 
 
 ![Order History](images/userHistory.png)
 
-## PRODUCTS
+## products
 
 Detta anrop används för att visa produktkatalog samt lägga till produkter. Anropen skickas som GET rep POST-förfrågan. OM anropet lyckas returneras bekräftelse.
 
@@ -56,7 +56,7 @@ Detta anrop används för att visa produktkatalog samt lägga till produkter. An
 
 ![Add product](images/addProductsBodyUrl.png)
 
-## PRODUCTS/:itemId
+## /products/:itemId
 
 Detta anrop används för att redigera en product. Anropen skickas som POST-förfrågan. OM anropet lyckas returneras bekräftelse.
 
@@ -64,7 +64,7 @@ Detta anrop används för att redigera en product. Anropen skickas som POST-för
 
 ![Edit product](images/editProduktBodyUrl.png)
 
-## PRODUCTS/campain
+## /products/campain
 
 Detta anrop används för lägga till en kampanj. Anropen skickas som POST-förfrågan. OM anropet lyckas returneras bekräftelse.
 
@@ -72,7 +72,7 @@ Detta anrop används för lägga till en kampanj. Anropen skickas som POST-förf
 
 ![Start Campaign](images/startCampaign.png)
 
-## PRODUCTS/campain/:campaignTitle
+## /products/campain/:campaignTitle
 
 Detta anrop används för lägga till varor en kampanj. Anropen skickas som POST-förfrågan. OM anropet lyckas returneras bekräftelse.
 
@@ -80,7 +80,7 @@ Detta anrop används för lägga till varor en kampanj. Anropen skickas som POST
 
 ![Start Campaign](images/startCampaign.png)
 
-## PRODUCTS/campain/:campaignTitle
+## /products/campain/:campaignTitle
 
 Detta anrop används för att ta bort en kampanj. Anropen skickas som DELETE-förfrågan. OM anropet lyckas returneras bekräftelse.
 
@@ -88,7 +88,7 @@ Detta anrop används för att ta bort en kampanj. Anropen skickas som DELETE-fö
 
 ![Start Campaign](images/deleteCampaign.png)
 
-## CARTS/
+## /carts/
 
 Detta anrop används för att starta upp en ny kundvagn. Anropen skickas som POST-förfrågan. OM anropet lyckas returneras bekräftelse.
 
@@ -96,25 +96,25 @@ Detta anrop används för att starta upp en ny kundvagn. Anropen skickas som POS
 
 ![Start Campaign](images/newCart.png)
 
-## CARTS/:cartId
+## /carts/:cartId
 
 Detta anrop används för att visa varukorgen. Anropen skickas som GET-förfrågan. OM anropet lyckas returneras varukorgen.
 
 ### URL:
 
-## ORDERS/login
+## /order/login
 
 Detta anrop används för att logga in användare. Anropen skickas som POST-förfrågan. OM anropet lyckas returneras bekräftelse samt en token som används som autentisering.
 
 ### URL:
 
-## ORDERS/login
+## /orders/login
 
 Detta anrop används för att logga in användare. Anropen skickas som POST-förfrågan. OM anropet lyckas returneras bekräftelse samt en token som används som autentisering.
 
 ### URL:
 
-## ORDERS/login
+## /orders/login
 
 Detta anrop används för att logga in användare. Anropen skickas som POST-förfrågan. OM anropet lyckas returneras bekräftelse samt en token som används som autentisering.
 
