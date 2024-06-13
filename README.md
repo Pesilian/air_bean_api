@@ -60,7 +60,7 @@ Detta anrop används för att redigera en product. Anropen skickas som POST-för
 
 ### URL:
 
-![Edit product](images/editProduktBodyUrl.png)
+![Edit product](images/editProduct.png)
 
 ## /campaign
 
