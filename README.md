@@ -108,7 +108,7 @@ Detta anrop används för att lägga till produkter i varukorgen. Anropen skicka
 
 ### URL:
 
-![Add product to cart](images/addProductCartBodyUrl.png)
+![Add product to cart](images/addToCart.png)
 
 ## /carts/:cartId/items/:productId
 
