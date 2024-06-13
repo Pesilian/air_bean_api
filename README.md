@@ -12,7 +12,7 @@ Detta anrop används för att hämta information om Air Bean. Anropet skickas so
 
 ### URL:
 
-![Info url](images/info.png.png)
+![Info url](images/info.png)
 
 ## /users/register
 
