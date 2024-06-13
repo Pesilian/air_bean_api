@@ -29,7 +29,6 @@ async function createguestOrder(req, res) {
       );
       const cartProductTitles = cart.items.map(item => item.title);
 
-      // Kontrollera om alla kampanjprodukter finns i varukorgen
       if (
         campaignProductTitles.every(title => cartProductTitles.includes(title))
       ) {
@@ -48,7 +47,6 @@ async function createguestOrder(req, res) {
         campaignProductCount[title] = (campaignProductCount[title] || 0) + 1;
       }
 
-      // Lägga till kampanjprodukterna i campaignItems
       for (const item of cart.items) {
         if (
           campaignProductTitles.includes(item.title) &&
@@ -159,7 +157,6 @@ async function createOrder(req, res) {
         ) {
           campaignItems.push(item);
           campaignProductCount[item.title]--;
-          // Ta bort produkten från otherItems
           otherItems = otherItems.filter(otherItem => otherItem !== item);
         }
       }
