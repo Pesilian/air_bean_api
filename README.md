@@ -2,11 +2,9 @@
 
 Individuellt projekt i kursen backend med Node.js för Lina Persson Signell YHFE23
 
-# Base URL:
+# Base URL and authorization:
 
-http://localhost:8000
-
-# Authentication Token:
+![Base URL and authorization](images/baseUrlAndToken.png)
 
 ## /info
 
@@ -14,7 +12,7 @@ Detta anrop används för att hämta information om Air Bean. Anropet skickas so
 
 ### URL:
 
-![Alt text](images/.png)
+![Info url](images/info.png.png)
 
 ## /users/register
 
@@ -64,7 +62,7 @@ Detta anrop används för att redigera en product. Anropen skickas som POST-för
 
 ![Edit product](images/editProduktBodyUrl.png)
 
-## /products/campain
+## /campaign
 
 Detta anrop används för lägga till en kampanj. Anropen skickas som POST-förfrågan. OM anropet lyckas returneras bekräftelse.
 
@@ -72,21 +70,21 @@ Detta anrop används för lägga till en kampanj. Anropen skickas som POST-förf
 
 ![Start Campaign](images/startCampaign.png)
 
-## /products/campain/:campaignTitle
+## campain/:campaignId
 
 Detta anrop används för lägga till varor en kampanj. Anropen skickas som POST-förfrågan. OM anropet lyckas returneras bekräftelse.
 
 ### URL:
 
-![Start Campaign](images/startCampaign.png)
+![Ad Campaign products](images/addCampaignProduct.png)
 
-## /products/campain/:campaignTitle
+## /campain/:campaignTitle
 
 Detta anrop används för att ta bort en kampanj. Anropen skickas som DELETE-förfrågan. OM anropet lyckas returneras bekräftelse.
 
 ### URL:
 
-![Start Campaign](images/deleteCampaign.png)
+![Delete Campaign](images/deleteCampaign.png)
 
 ## /carts/
 
@@ -94,13 +92,31 @@ Detta anrop används för att starta upp en ny kundvagn. Anropen skickas som POS
 
 ### URL:
 
-![Start Campaign](images/newCart.png)
+![New Cart](images/newCart.png)
 
 ## /carts/:cartId
 
 Detta anrop används för att visa varukorgen. Anropen skickas som GET-förfrågan. OM anropet lyckas returneras varukorgen.
 
 ### URL:
+
+![New Cart](images/viewCart.png)
+
+## /carts/:cartId
+
+Detta anrop används för att lägga till produkter i varukorgen. Anropen skickas som POST-förfrågan. OM anropet lyckas returneras bekräftelse.
+
+### URL:
+
+![New Cart](images/addProductCartBodyUrl.png)
+
+## /carts/:cartId/items/:productId
+
+Detta anrop används för att ta bort produkter i varukorgen. Anropen skickas som DELETE-förfrågan. OM anropet lyckas returneras bekräftelse.
+
+### URL:
+
+![New Cart](images/deleteProdCart.png)
 
 ## /order/login
 

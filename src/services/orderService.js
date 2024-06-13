@@ -2,8 +2,9 @@ import { cartDb, orderDb } from '../config/db.js';
 
 //Beställning som gäst
 async function createguestOrder(req, res) {
+  const cartId = req.params.cartId;
   try {
-    const cart = await cartDb.find({});
+    const cart = await cartDb.find({ cartId });
     if (cart.length === 0) {
       return res.status(400).json({ message: 'Cart is empty' });
     }
@@ -50,8 +51,10 @@ async function createguestOrder(req, res) {
 
 //Beställning som inloggad användare:
 async function createOrder(req, res) {
+  const cartId = req.params.cartId;
+
   try {
-    const cart = await cartDb.find({});
+    const cart = await cartDb.find({ cartId });
     if (cart.length === 0) {
       return res.status(400).json({ message: 'Cart is empty' });
     }
