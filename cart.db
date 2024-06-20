@@ -1,1 +1,5 @@
-{"items":[{"title":"Bryggkaffe","price":39,"preptime":5},{"title":"Bryggkaffe","price":39,"preptime":5},{"title":"Bryggkaffe","price":39,"preptime":5}],"_id":"mRNiHUo5wkosTSu5"}
+{"items":[],"_id":"eaxzsp9Y9TvHbDFK"}
+{"items":[],"_id":"EpNnOHSkAa7IjON9"}
+{"items":[{"title":"Bryggkaffe","price":20,"preptime":5,"itemid":1718265343019}],"_id":"EpNnOHSkAa7IjON9"}
+{"items":[{"title":"Bryggkaffe","price":20,"preptime":5,"itemid":1718265343019},{"title":"Bryggkaffe","price":20,"preptime":5,"itemid":1718265344083}],"_id":"EpNnOHSkAa7IjON9"}
+{"$$deleted":true,"_id":"EpNnOHSkAa7IjON9"}

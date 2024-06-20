@@ -1,0 +1,10 @@
+{"title":"Bryggkaffe","price":20,"desc":"Bryggt med våra färska bönor","preptime":5,"createdAt":{"$$date":1718051216622},"_id":"2TXKApamjpgnBTRB"}
+{"title":"Äppelpaj","price":35,"desc":"Bakad med kärlek","preptime":5,"createdAt":{"$$date":1718107157908},"_id":"5cWE84rvIIEAmjCd"}
+{"title":"Finsk Pinne","price":20,"desc":"Bakad med kärlek","preptime":5,"createdAt":{"$$date":1718107137574},"_id":"8d6bpFfqKIPW90Gc"}
+{"title":"Cappuccino","price":20,"desc":"Bakad med kärlek","preptime":8,"createdAt":{"$$date":1718107176960},"_id":"9vBvxsNM7eSAai51","modifiedAt":{"$$date":1718107671412}}
+{"title":"Cortado","price":25,"desc":"Bryggt med våra färska bönor","preptime":5,"createdAt":{"$$date":1718107165312},"_id":"D3DkMsanJmkGEPaV"}
+{"title":"Kladdkaka","price":35,"desc":"Bakad med kärlek","preptime":5,"createdAt":{"$$date":1718107150082},"_id":"EhGa9uHRT1B6M1mY"}
+{"title":"Chokladboll","price":25,"desc":"Bakad med kärlek","preptime":5,"createdAt":{"$$date":1718107125986},"_id":"FysK48dsXhE4g4u6"}
+{"title":"Kanelbulle","price":30,"desc":"Bakad med kärlek","preptime":5,"createdAt":{"$$date":1718106989698},"_id":"bWCVufqy8rXfxzde"}
+{"title":"Kaffe Latte","price":35,"desc":"Bryggt med våra färska bönor","preptime":8,"createdAt":{"$$date":1718047379420},"_id":"bmGJ7tajemtByjhu","modifiedAt":{"$$date":1718051327920}}
+{"title":"Espresso","price":25,"desc":"Bryggt med våra färska bönor","preptime":5,"createdAt":{"$$date":1718107269359},"_id":"vXteWWpMFWDuiTjL"}

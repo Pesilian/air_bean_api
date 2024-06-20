@@ -1,99 +1,101 @@
-import { cartDb, orderDb } from '../config/db.js';
+import { cartDb, orderDb, campaignsDb } from '../config/db.js';
 
-//Beställning som gäst
+//CREATE ORDER AS GUEST
 async function createguestOrder(req, res) {
   const cartId = req.params.cartId;
   try {
-    const cart = await cartDb.find({ cartId });
-    if (cart.length === 0) {
+    const cartId = req.params.cartId;
+
+    const cart = await cartDb.findOne({ _id: cartId });
+    if (!cart || cart.items.length === 0) {
       return res.status(400).json({ message: 'Cart is empty' });
     }
 
-    const totalPrice = cart.reduce((total, order) => total + order.price, 0);
-
-    //Beräkna leveranstid
     const orderTime = new Date();
-    const maxPreparationTime = Math.max(...cart.map(order => order.preptime));
-
-    console.log(maxPreparationTime);
-
+    const maxPreparationTime = Math.max(
+      ...cart.items.map(item => item.preptime)
+    );
     const deliveryTime = new Date(
       orderTime.getTime() + maxPreparationTime * 60000
     );
 
-    console.log(orderTime, deliveryTime);
+    const campaigns = await campaignsDb.find();
+    let applicableCampaign = null;
+    let campaignItems = [];
+    let otherItems = [...cart.items];
 
-    const order = {
-      items: cart,
-      totalPrice,
-      deliveryTime,
-      createdAt: new Date(),
-    };
+    for (const campaign of campaigns) {
+      const campaignProductTitles = campaign.Products.map(
+        product => product.title
+      );
+      const cartProductTitles = cart.items.map(item => item.title);
 
-    await orderDb.insert(order);
-
-    // Tömmer kundvagnen efter ordern är skapad
-    await cartDb.remove({}, { multi: true });
-
-    res.status(201).json({
-      items: order.items,
-      totalPrice: order.totalPrice,
-      delivery: order.deliveryTime,
-      message: 'Order created successfully',
-      orderId: order._id,
-    });
-  } catch (error) {
-    res
-      .status(500)
-      .json({ message: 'Failed to create order', error: error.message });
-  }
-}
-
-//Beställning som inloggad användare:
-async function createOrder(req, res) {
-  const cartId = req.params.cartId;
-
-  try {
-    const cart = await cartDb.find({ cartId });
-    if (cart.length === 0) {
-      return res.status(400).json({ message: 'Cart is empty' });
+      if (
+        campaignProductTitles.every(title => cartProductTitles.includes(title))
+      ) {
+        applicableCampaign = campaign;
+        break;
+      }
     }
 
-    const totalPrice = cart.reduce((total, order) => total + order.price, 0);
+    if (applicableCampaign) {
+      const campaignProductTitles = applicableCampaign.Products.map(
+        product => product.title
+      );
+      const campaignProductCount = {};
 
-    // Beräkna leveranstid
-    const orderTime = new Date();
-    const maxPreparationTime = Math.max(...cart.map(order => order.preptime));
+      for (const title of campaignProductTitles) {
+        campaignProductCount[title] = (campaignProductCount[title] || 0) + 1;
+      }
 
-    console.log(maxPreparationTime);
+      for (const item of cart.items) {
+        if (
+          campaignProductTitles.includes(item.title) &&
+          campaignProductCount[item.title] > 0
+        ) {
+          campaignItems.push(item);
+          campaignProductCount[item.title]--;
+          // Ta bort produkten från otherItems
+          otherItems = otherItems.filter(otherItem => otherItem !== item);
+        }
+      }
 
-    const deliveryTime = new Date(
-      orderTime.getTime() + maxPreparationTime * 60000
+      campaignItems = campaignItems.slice(0, campaignProductTitles.length);
+    }
+
+    const otherItemsTotalPrice = otherItems.reduce(
+      (total, item) => total + item.price,
+      0
     );
+    const totalPrice =
+      (applicableCampaign ? applicableCampaign.price : 0) +
+      otherItemsTotalPrice;
 
-    console.log(orderTime, deliveryTime);
-
-    // Kolla om användaren är inloggad
-    const user = req.user;
     const order = {
-      items: cart,
+      items: {
+        campaign: campaignItems.length
+          ? {
+              title: applicableCampaign.title,
+              items: campaignItems,
+              price: applicableCampaign.price,
+            }
+          : null,
+        others: otherItems,
+      },
       totalPrice,
       deliveryTime,
       createdAt: new Date(),
-      userId: user.id, // Inkluderar userId om användaren är inloggad
     };
 
     const newOrder = await orderDb.insert(order);
-
-    // Tömmer kundvagnen efter ordern är skapad
-    await cartDb.remove({}, { multi: true });
+    await cartDb.remove({ _id: cartId });
 
     res.status(201).json({
       items: newOrder.items,
       totalPrice: newOrder.totalPrice,
       delivery: newOrder.deliveryTime,
       message: 'Order created successfully',
-      orderId: newOrder._id, // Inkluderar orderId om användaren är inloggad
+      orderId: newOrder._id,
     });
   } catch (error) {
     res
@@ -102,25 +104,144 @@ async function createOrder(req, res) {
   }
 }
 
-// JENS, VILL DU GÖRA DEN HÄR TACK (getUserOrders funktionen)
-// Den ska visa alla ordrar och en totalsumma för alla ordrar
+//CREATE ORDER AS USER
+async function createOrder(req, res) {
+  const cartId = req.params.cartId;
 
-// Funktion för att hämta en användares orderhistorik
-async function getUserOrders(req, res) {
   try {
-    const userId = req.params.userId;
-    console.log(userId);
+    const cartId = req.params.cartId;
 
-    const usersOrder = await orderDb.find({ userId: userId });
-
-    if (usersOrder.length === 0) {
-      return res.status(404).json({ error: 'No orders found' });
+    const cart = await cartDb.findOne({ _id: cartId });
+    if (!cart || cart.items.length === 0) {
+      return res.status(400).json({ message: 'Cart is empty' });
     }
 
-    res.status(200).json({ orderCount: usersOrder.length, orders: usersOrder });
+    const orderTime = new Date();
+    const maxPreparationTime = Math.max(
+      ...cart.items.map(item => item.preptime)
+    );
+    const deliveryTime = new Date(
+      orderTime.getTime() + maxPreparationTime * 60000
+    );
+
+    const campaigns = await campaignsDb.find();
+    let applicableCampaign = null;
+    let campaignItems = [];
+    let otherItems = [...cart.items];
+
+    for (const campaign of campaigns) {
+      const campaignProductTitles = campaign.Products.map(
+        product => product.title
+      );
+      const cartProductTitles = cart.items.map(item => item.title);
+
+      if (
+        campaignProductTitles.every(title => cartProductTitles.includes(title))
+      ) {
+        applicableCampaign = campaign;
+        break;
+      }
+    }
+
+    if (applicableCampaign) {
+      const campaignProductTitles = applicableCampaign.Products.map(
+        product => product.title
+      );
+      const campaignProductCount = {};
+
+      for (const title of campaignProductTitles) {
+        campaignProductCount[title] = (campaignProductCount[title] || 0) + 1;
+      }
+
+      for (const item of cart.items) {
+        if (
+          campaignProductTitles.includes(item.title) &&
+          campaignProductCount[item.title] > 0
+        ) {
+          campaignItems.push(item);
+          campaignProductCount[item.title]--;
+          otherItems = otherItems.filter(otherItem => otherItem !== item);
+        }
+      }
+
+      campaignItems = campaignItems.slice(0, campaignProductTitles.length);
+    }
+
+    const otherItemsTotalPrice = otherItems.reduce(
+      (total, item) => total + item.price,
+      0
+    );
+    const totalPrice =
+      (applicableCampaign ? applicableCampaign.price : 0) +
+      otherItemsTotalPrice;
+
+    const user = req.user;
+    console.log(user);
+    const order = {
+      items: {
+        campaign: campaignItems.length
+          ? {
+              title: applicableCampaign.title,
+              items: campaignItems,
+              price: applicableCampaign.price,
+            }
+          : null,
+        others: otherItems,
+      },
+      totalPrice,
+      userid: user.id,
+      deliveryTime,
+      createdAt: new Date(),
+    };
+
+    const newOrder = await orderDb.insert(order);
+    await cartDb.remove({ _id: cartId });
+
+    res.status(201).json({
+      items: newOrder.items,
+      totalPrice: newOrder.totalPrice,
+      delivery: newOrder.deliveryTime,
+      userId: newOrder.userid,
+      message: 'Order created successfully',
+      orderId: newOrder._id,
+    });
   } catch (error) {
-    res.status(500).json({ error: 'Failed to get users orders' });
+    res
+      .status(500)
+      .json({ message: 'Failed to create order', error: error.message });
   }
 }
 
-export { createOrder, getUserOrders, createguestOrder };
+//SHOW ORDER STATUS
+async function getOrderById(req, res) {
+  try {
+    const orderId = req.params.orderId;
+
+    const order = await orderDb.findOne({ _id: orderId });
+
+    const currentTime = new Date();
+    const deliveryTime = new Date(order.deliveryTime);
+    const isDelivered = deliveryTime <= currentTime;
+
+    let timeLeft = null;
+    if (!isDelivered) {
+      const timeDiff = deliveryTime - currentTime;
+      const minutesLeft = Math.floor(timeDiff / 60000);
+
+      const secondsLeft = Math.floor((timeDiff % 60000) / 1000);
+      timeLeft = `${minutesLeft} minutes and ${secondsLeft} seconds`;
+    }
+
+    const orderWithDeliveryStatus = {
+      ...order,
+      isDelivered,
+      timeLeft: isDelivered ? null : timeLeft,
+    };
+
+    res.status(200).json({ orderWithDeliveryStatus });
+  } catch (error) {
+    res.status(400).json({ error: 'Failed to get order' });
+  }
+}
+
+export { createOrder, createguestOrder, getOrderById };

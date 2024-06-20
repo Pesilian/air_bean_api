@@ -1,24 +1,21 @@
-import { v4 as uuidv4 } from 'uuid';
-import { cartDb } from '../config/db.js';
-import { menu } from '../config/data.js';
-import cartRouter from '../routes/carts.js';
+import { cartDb, productsDb } from '../config/db.js';
 
-//POST, Skapa upp Cart
-async function addCart(req, res) {
+// CREATE CART
+async function newCart(req, res) {
   const Cart = { items: [] };
 
   try {
     const newCart = await cartDb.insert(Cart);
 
     res
-      .status(201)
+      .status(201) // TODO: Man bruka skicka med en "Location"-header i svaret vid 201 istället för att skicka med cartid i bodyn.
       .json({ cartId: newCart._id, message: 'Cart created successfully' });
   } catch (error) {
     res.status(500).json({ error: 'Failed to create cart' });
   }
 }
 
-// "POST"/cart Funktion för att lägga till i kundvagnen
+// ADD ITEM TO CART
 async function addToCart(req, res) {
   const { title, price } = req.body;
   const cartId = req.params.cartId;
@@ -29,7 +26,9 @@ async function addToCart(req, res) {
     return res.status(404).json({ error: 'Cart not found' });
   }
 
-  const product = menu.find(item => item.title === title);
+  const product = await productsDb.findOne({ title: title });
+
+  console.log(product);
 
   if (!product) {
     return res.status(400).json({ error: 'Product not found' });
@@ -39,10 +38,14 @@ async function addToCart(req, res) {
     return res.status(400).json({ error: 'Invalid price' });
   }
 
-  const cartItem = { title, price, preptime: product.preptime };
+  const cartItem = {
+    title,
+    price,
+    preptime: product.preptime,
+    itemid: Date.now(),
+  };
 
   try {
-    // Använd $push för att lägga till cartItem till items arrayen
     await cartDb.update({ _id: cartId }, { $push: { items: cartItem } });
 
     const response = {
@@ -55,18 +58,16 @@ async function addToCart(req, res) {
     res.status(201).json(response);
   } catch (error) {
     console.log(error);
-    res.status(400).json({ error: 'Failed to add to cart' });
+    res.status(500).json({ error: 'Failed to add to cart' });
   }
 }
 
-// "GET"/cart varukorg
+// SHOW CART
 async function viewCart(req, res) {
   const cartId = req.params.cartId;
 
   try {
     const cart = await cartDb.findOne({ _id: cartId });
-
-    console.log(cart);
 
     const totalPrice = cart.items.reduce(
       (total, cart) => total + cart.price,
@@ -75,28 +76,36 @@ async function viewCart(req, res) {
 
     res.status(200).json({ cart, totalPrice });
   } catch (error) {
-    res.status(400).json({ error: 'Failed to retrieve cart' });
+    res.status(500).json({ error: 'Failed to retrieve cart' });
   }
 }
 
-// "DELETE"/cart/id Ta bort från kundvagnen
+// REMOVE ITEM FROM CART
 async function removeFromCart(req, res) {
-  const { cartId } = req;
-  try {
-    const cartItem = await cartDb.findOne({ _id: req.params.title, cartId });
+  const itemId = req.params.itemId;
+  const cartId = req.params.cartId;
 
-    if (!cartItem) {
-      return res.status(404).json({ message: 'Cart item not found' });
+  try {
+    let cart = await cartDb.findOne({ _id: cartId });
+
+    if (!cart) {
+      return res.status(404).json({ error: 'Cart not found' });
     }
 
-    await cartDb.remove({ _id: req.params.id, cartId });
+    const newItems = cart.items.filter(item => item.itemid !== Number(itemId));
 
-    res.status(200).json({ message: 'Cart item removed successfully' });
+    await cartDb.update({ _id: cartId }, { $set: { items: newItems } });
+
+    const response = {
+      itemId: itemId,
+      message: 'Item removed from cart successfully',
+    };
+
+    res.status(200).json(response);
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: 'An error occurred', error: error.message });
+    console.log(error);
+    res.status(500).json({ error: 'Failed to remove item from cart' });
   }
 }
 
-export { addCart, addToCart, viewCart, removeFromCart };
+export { newCart, addToCart, viewCart, removeFromCart };

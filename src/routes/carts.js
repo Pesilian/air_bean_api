@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import {
-  addCart,
+  newCart,
   viewCart,
   addToCart,
   removeFromCart,
@@ -9,12 +9,16 @@ import { validateCart } from '../middleware/validateCart.js';
 
 const cartRouter = Router();
 
-cartRouter.post('/', addCart);
+//POST - /carts/  -skapar upp en kundvagn
+cartRouter.post('/', newCart);
 
+//POST - /carts/:cartId -Lägg till varor i kundvagn
 cartRouter.post('/:cartId/items', validateCart, addToCart);
 
+//POST - /carts/:cartId -Visa kundvagn
 cartRouter.get('/:cartId', viewCart);
 
-cartRouter.delete('/:cartId/items/:id', removeFromCart);
+//POST -/carts/:cartId -Ta bort vara från kundvagn // TODO: kommentarer som inte är aktuella längre.
+cartRouter.delete('/:cartId/items/:itemId', removeFromCart);
 
 export default cartRouter;
