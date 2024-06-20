@@ -2,6 +2,7 @@ import { cartDb, orderDb, campaignsDb } from '../config/db.js';
 
 //CREATE ORDER AS GUEST
 async function createguestOrder(req, res) {
+  const cartId = req.params.cartId;
   try {
     const cartId = req.params.cartId;
 
@@ -105,6 +106,8 @@ async function createguestOrder(req, res) {
 
 //CREATE ORDER AS USER
 async function createOrder(req, res) {
+  const cartId = req.params.cartId;
+
   try {
     const cartId = req.params.cartId;
 
